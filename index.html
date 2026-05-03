@@ -1,1 +1,910 @@
-<h1>Hello Malaysia</h1>
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한마당 Malaysia — 말레이시아 생활, 더 똑똑하게</title>
+<meta name="description" content="말레이시아 한인 커뮤니티를 위한 PWA 생활 플랫폼. AI 뉴스 요약, 한인 업체 디렉토리, 실시간 알림. 쿠알라룸푸르 생활 정보.">
+
+<!-- Pretendard Variable Font -->
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+
+<style>
+/* =========================================================================
+   Hanmadang Design System — Colors & Type
+   ========================================================================= */
+:root {
+  --color-coral:           #FE5D33;
+  --color-coral-hover:     #E84A22;
+  --color-ink:             #111827;
+  --color-ink-2:           #1F2937;
+  --color-ink-3:           #374151;
+  --color-fg-1:            #111827;
+  --color-fg-2:            #4B5563;
+  --color-fg-3:            #6B7280;
+  --color-fg-4:            #9CA3AF;
+  --color-fg-5:            #ADAEBC;
+  --color-bg:              #FFFFFF;
+  --color-surface-1:       #F6F6F6;
+  --color-surface-2:       #F8F8F8;
+  --color-border:          #E5E7EB;
+  --color-sky:             #DBEDFB;
+  --color-pink:            #FEC6C7;
+  --color-mauve:           #D9B8D5;
+  --color-success:         #34D399;
+  --color-success-2:       #10B981;
+  --color-amber:           #FBBF24;
+  --color-violet:          #6D28D9;
+  --color-violet-2:        #4F46E5;
+  --color-violet-bg:       #EDE9FE;
+  --shadow-card-hover:     0 8px 24px rgba(0,0,0,0.06);
+  --shadow-modal:          0 20px 25px rgba(0,0,0,0.10), 0 8px 10px rgba(0,0,0,0.10);
+  --radius-card:           40px;
+  --radius-screen:         20px;
+  --radius-pill:           9999px;
+  --radius-input:          100px;
+  --radius-image:          16px;
+  --space-page-gutter:     100px;
+  --space-card-pad:        50px;
+  --space-section-y:       120px;
+  --width-page:            1440px;
+  --width-content:         1240px;
+  --font-sans: "PretendardVariable", "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", system-ui, sans-serif;
+  --ease-standard:         cubic-bezier(.4, 0, .2, 1);
+  --duration-fast:         160ms;
+  --duration-base:         220ms;
+}
+
+html, body { margin: 0; background: #fff; font-family: var(--font-sans); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+*, *::before, *::after { box-sizing: border-box; }
+.page { width: 1440px; margin: 0 auto; }
+a { color: inherit; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; border: 0; border-radius: var(--radius-input);
+  padding: 13px 40px; font: 700 16px/1 var(--font-sans); cursor: pointer;
+  transition: background-color var(--duration-base) var(--ease-standard),
+              transform var(--duration-fast) var(--ease-standard);
+  text-decoration: none;
+}
+.btn:active { transform: scale(0.97); }
+.btn--coral { background: var(--color-coral); color: #fff; }
+.btn--coral:hover { background: var(--color-coral-hover); }
+.btn--ink { background: var(--color-ink); color: #fff; }
+.btn--ink:hover { background: #000; }
+.btn--white { background: #fff; color: var(--color-ink); }
+.btn--white:hover { background: var(--color-surface-1); }
+.btn--lg { height: 58px; padding: 13px 40px; }
+.btn--md { height: 56px; padding: 14px 32px; }
+.btn--sm { height: 40px; padding: 10px 28px; font-size: 14px; }
+
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1);} 50% { opacity:.5; transform:scale(0.85);} }
+</style>
+</head>
+<body>
+<div class="page" id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- ── Tweaks Panel ──────────────────────────────────────────────────────── -->
+<script type="text/babel">
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:hidden;min-height:0;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+`;
+
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+  }, []);
+  return [values, setTweak];
+}
+
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = { x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)), y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)) };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(clampToViewport) : null;
+    if (ro) { ro.observe(document.documentElement); return () => ro.disconnect(); }
+    window.addEventListener('resize', clampToViewport);
+    return () => window.removeEventListener('resize', clampToViewport);
+  }, [open, clampToViewport]);
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+  const dismiss = () => { setOpen(false); window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); };
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => { offsetRef.current = { x: startRight - (ev.clientX - sx), y: startBottom - (ev.clientY - sy) }; clampToViewport(); };
+    const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" onMouseDown={(e) => e.stopPropagation()} onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">{children}</div>
+      </div>
+    </>
+  );
+}
+
+function TweakSection({ title, children }) {
+  return (<><div className="twk-sect">{title}</div>{children}</>);
+}
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'} role="switch" aria-checked={!!value} onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+function TweakColor({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <input type="color" className="twk-swatch" value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+Object.assign(window, { useTweaks, TweaksPanel, TweakSection, TweakToggle, TweakColor });
+</script>
+
+<!-- ── Phone Mock ────────────────────────────────────────────────────────── -->
+<script type="text/babel">
+function PhoneMock({ width = 280, children, frameColor = "#111827", style = {} }) {
+  const height = Math.round(width * 19.5 / 9);
+  return (
+    <div style={{ width, height, background: frameColor, borderRadius: 44, padding: 8, boxSizing: "border-box", boxShadow: "0 30px 60px -20px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.08)", position: "relative", ...style }}>
+      <div style={{ width: "100%", height: "100%", background: "#fff", borderRadius: 36, overflow: "hidden", position: "relative" }}>
+        <div style={{ position: "absolute", top: 8, left: "50%", transform: "translateX(-50%)", width: 96, height: 26, background: "#111827", borderRadius: 999, zIndex: 5 }}/>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 44, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 24px", fontSize: 13, fontWeight: 600, color: "#fff", zIndex: 4, mixBlendMode: "difference" }}>
+          <span>9:41</span>
+          <span style={{ display: "flex", gap: 5, alignItems: "center" }}>
+            <span style={{ display: "inline-block", width: 16, height: 10, border: "1.2px solid #fff", borderRadius: 2, position: "relative" }}>
+              <span style={{ position: "absolute", inset: 1, background: "#fff", borderRadius: 1, width: "70%" }}/>
+            </span>
+          </span>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+window.PhoneMock = PhoneMock;
+</script>
+
+<!-- ── App Screens ───────────────────────────────────────────────────────── -->
+<script type="text/babel">
+function AppHeader({ title, accent }) {
+  return (
+    <div style={{ background: accent, paddingTop: 44, paddingBottom: 28, paddingLeft: 22, paddingRight: 22, color: "#fff" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <div style={{ width: 14, height: 1.5, background: "#fff" }}/><div style={{ width: 14, height: 1.5, background: "#fff" }}/><div style={{ width: 14, height: 1.5, background: "#fff" }}/>
+          </div>
+        </div>
+      </div>
+      <div style={{ height: 18 }}/>
+      <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: "-0.01em" }}>{title}</div>
+    </div>
+  );
+}
+
+function TabBar({ active, accent }) {
+  const items = [
+    { id: "home", label: "홈", glyph: "⌂" },
+    { id: "cat", label: "카테고리", glyph: "☰" },
+    { id: "today", label: "Today MY", glyph: "◐" },
+    { id: "book", label: "나의예약", glyph: "❑" },
+  ];
+  return (
+    <div style={{ borderTop: "1px solid #EEE", background: "#fff", padding: "8px 0 18px", display: "flex" }}>
+      {items.map(it => (
+        <div key={it.id} style={{ flex: 1, textAlign: "center", color: active === it.id ? accent : "#9CA3AF" }}>
+          <div style={{ fontSize: 18, lineHeight: 1 }}>{it.glyph}</div>
+          <div style={{ fontSize: 10, marginTop: 4, fontWeight: active === it.id ? 700 : 500 }}>{it.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function HomeScreen({ accent = "#FE5D33", logoSrc = "assets/hanmadang-logo.png" }) {
+  return (
+    <div style={{ height: "100%", background: "#F6F6F6", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <AppHeader title="" accent={accent}/>
+      <div style={{ padding: "0 18px", marginTop: -14, position: "relative", zIndex: 2 }}>
+        <div style={{ background: "#fff", borderRadius: 24, padding: 18, display: "flex", alignItems: "center", gap: 14, boxShadow: "0 4px 16px rgba(0,0,0,0.04)" }}>
+          <div style={{ width: 64, height: 64, borderRadius: 18, background: "#fff", border: "1px solid #F0F0F0", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", flexShrink: 0 }}>
+            <img src={logoSrc} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }}/>
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#111827" }}>한마당</div>
+            <div style={{ fontSize: 11, color: "#6B7280", lineHeight: "15px", marginTop: 3 }}>말레이시아의 일상을<br/>더 쉽게 만드는 생활 플랫폼</div>
+          </div>
+        </div>
+      </div>
+      <div style={{ padding: "14px 18px" }}>
+        <button style={{ width: "100%", height: 42, borderRadius: 9999, background: accent, color: "#fff", border: 0, fontWeight: 700, fontSize: 13, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+          <span style={{ fontSize: 14 }}>💡</span> 앱 사용법 (필독!)
+        </button>
+      </div>
+      <div style={{ padding: "0 18px" }}>
+        <div style={{ background: "#fff", borderRadius: 20, padding: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>이벤트</div>
+            <div style={{ fontSize: 11, color: accent, fontWeight: 600 }}>See All ›</div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 12 }}>
+            {[1,2].map(i => (
+              <div key={i} style={{ background: "#F6F6F6", borderRadius: 14, height: 88, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img src={logoSrc} alt="" style={{ width: 42, height: 42, objectFit: "contain", opacity: i === 2 ? 0.3 : 1 }}/>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 10, fontWeight: 700, color: "#111827", marginTop: 8 }}>한마당 가게 등록 이벤트!</div>
+          <div style={{ fontSize: 9, color: "#6B7280", marginTop: 2, lineHeight: "13px" }}>한마당 앱에 가게 등록을 원하시는 분은 홈페이지 아래 연락처…</div>
+        </div>
+      </div>
+      <div style={{ flex: 1, padding: "14px 18px 0" }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: "#111827", marginBottom: 8 }}>카테고리</div>
+        <div style={{ background: "#fff", borderRadius: 20, overflow: "hidden" }}>
+          {["음식점","홈 / 생활 서비스","뷰티 / 헬스","주거 / 인테리어"].map((c, i) => (
+            <div key={c} style={{ padding: "11px 16px", borderTop: i === 0 ? "none" : "1px solid #F1F1F1", fontSize: 12, color: "#111827", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              {c}<span style={{ color: "#9CA3AF", fontSize: 14 }}>›</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <TabBar active="home" accent={accent}/>
+    </div>
+  );
+}
+
+function CategoryScreen({ accent = "#FE5D33" }) {
+  const cats = [
+    { name: "음식점", sub: "음식점 / 카페 / 디저트", icon: "🍽️" },
+    { name: "홈 / 생활 서비스", sub: "청소 / 이사 / 수리", icon: "🧹" },
+    { name: "뷰티 / 헬스", sub: "미용 / 스파 / 헬스(PT)", icon: "💆" },
+    { name: "주거 / 인테리어", sub: "인테리어 / 가구 / 부동산", icon: "🛋️" },
+    { name: "교육 / 자기계발", sub: "학원 / 어학원 / 자격증", icon: "📚" },
+    { name: "취미 / 여가", sub: "골프 / 낚시 / 액티비티", icon: "🚴" },
+    { name: "이동 / 차량", sub: "렌터카 / 정비 / 픽업", icon: "🚗" },
+  ];
+  return (
+    <div style={{ height: "100%", background: "#fff", display: "flex", flexDirection: "column" }}>
+      <AppHeader title="카테고리" accent={accent}/>
+      <div style={{ flex: 1, overflow: "hidden" }}>
+        {cats.map((c, i) => (
+          <div key={c.name} style={{ padding: "12px 18px", borderBottom: "1px solid #F3F3F3", display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ width: 42, height: 42, borderRadius: 12, background: i%3===0?"#FFF1EB":i%3===1?"#FEF3C7":"#FEC6C7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>{c.icon}</div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{c.name}</div>
+              <div style={{ fontSize: 10, color: "#6B7280", marginTop: 2 }}>{c.sub}</div>
+            </div>
+            <span style={{ color: "#9CA3AF", fontSize: 14 }}>›</span>
+          </div>
+        ))}
+      </div>
+      <TabBar active="cat" accent={accent}/>
+    </div>
+  );
+}
+
+Object.assign(window, { HomeScreen, CategoryScreen, TabBar });
+</script>
+
+<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+<script type="text/babel">
+function HanmadangWordmark({ light = true, scale = 1 }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ width: 36*scale, height: 36*scale, borderRadius: 10, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", border: "1px solid rgba(0,0,0,0.05)" }}>
+        <img src="assets/hanmadang-logo.png" alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }}/>
+      </div>
+      <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: 24*scale, color: light ? "#fff" : "#111827", letterSpacing: "-0.02em" }}>
+        한마당<span style={{ opacity: .7, fontWeight: 500, marginLeft: 6, fontSize: 18*scale }}>Malaysia</span>
+      </span>
+    </div>
+  );
+}
+
+function HeroDecor() {
+  const dots = [
+    {l:60,  t:120, s:64,  c:"#FEC6C7"},
+    {l:1180,t:160, s:72,  c:"#FEC6C7"},
+    {l:1230,t:520, s:50,  c:"#D9B8D5"},
+    {l:80,  t:520, s:42,  c:"#FFFFFF", o:.5},
+    {l:160, t:280, s:54,  c:"#D9B8D5"},
+    {l:1080,t:640, s:48,  c:"#FFFFFF", o:.6},
+  ];
+  const rects = [
+    {l:-40, t:600, w:240, h:120, c:"#DBEDFB"},
+    {l:1240,t:-30, w:200, h:140, c:"#D9B8D5"},
+    {l:1280,t:660, w:160, h:120, c:"#FEC6C7"},
+    {l:60,  t:60,  w:120, h:90,  c:"#FFFFFF", o:.18},
+    {l:1100,t:30,  w:90,  h:60,  c:"#FFFFFF", o:.18},
+  ];
+  return (
+    <>
+      {rects.map((r,i) => (<div key={"r"+i} style={{ position: "absolute", left: r.l, top: r.t, width: r.w, height: r.h, background: r.c, borderRadius: 40, opacity: r.o ?? 1 }}/>))}
+      {dots.map((d,i) => (<div key={"d"+i} style={{ position: "absolute", left: d.l, top: d.t, width: d.s, height: d.s, background: d.c, borderRadius: "50%", opacity: d.o ?? 1 }}/>))}
+    </>
+  );
+}
+
+/* ★ 실제 QR 코드 이미지 사용 */
+function QRCode({ size = 130 }) {
+  return <img src="assets/qrcode.svg" width={size} height={size} alt="한마당 QR 코드" style={{ display: "block", borderRadius: 8 }}/>;
+}
+
+function HanmadangHero({ accent, onNav }) {
+  const [showQR, setShowQR] = React.useState(false);
+  const navItems = [
+    { id: "features", label: "기능" },
+    { id: "pwa", label: "PWA" },
+    { id: "partners", label: "입점 신청" },
+    { id: "about", label: "소개" },
+    { id: "faq", label: "FAQ" },
+  ];
+  return (
+    <div style={{ position: "relative", margin: "24px", borderRadius: 40, overflow: "hidden", background: accent, height: 820 }}>
+      <HeroDecor/>
+      <div style={{ position: "absolute", left: 50, top: 46 }}><HanmadangWordmark/></div>
+      <nav style={{ position: "absolute", left: 0, right: 0, top: 55, display: "flex", justifyContent: "center", gap: 30 }}>
+        {navItems.map(n => (
+          <a key={n.id} onClick={(e) => { e.preventDefault(); onNav && onNav(n.id); }} href={`#${n.id}`}
+             style={{ color: "#fff", fontFamily: "var(--font-sans)", fontSize: 15, textDecoration: "none", opacity: .95, fontWeight: 500 }}>{n.label}</a>
+        ))}
+      </nav>
+      <a href="https://app.hanmadang.my" target="_blank" rel="noopener"
+         style={{ position: "absolute", right: 50, top: 42, height: 44, padding: "0 26px", borderRadius: 9999, background: "#fff", color: "#111827", border: 0, fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: 15, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+        app.hanmadang.my →
+      </a>
+
+      <div style={{ position: "absolute", left: 90, top: 200, maxWidth: 680, color: "#fff" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 9999, padding: "7px 14px", fontSize: 13, fontWeight: 500, marginBottom: 24 }}>
+          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34D399" }}/>
+          PWA · 설치 없이 바로 사용 · Since 2026
+        </div>
+        <h1 style={{ margin: 0, fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: 64, lineHeight: 1.05, letterSpacing: "-0.025em" }}>
+          말레이시아 생활,<br/>
+          이제 더 <span style={{ fontWeight: 300, fontStyle: "italic" }}>똑똑하게</span>.<br/>
+          한마당으로 연결되다.
+        </h1>
+        <p style={{ margin: "28px 0 0", maxWidth: 520, fontFamily: "var(--font-sans)", fontSize: 18, lineHeight: "30px", fontWeight: 400, opacity: .95 }}>
+          AI 뉴스 요약부터 한인 업체 디렉토리, 실시간 알림까지 — 말레이시아 생활의 모든 것을 한 손에 담았습니다.
+        </p>
+
+        <div style={{ display: "flex", gap: 14, marginTop: 38, alignItems: "center" }}>
+          <a href="https://app.hanmadang.my" target="_blank" rel="noopener"
+             style={{ height: 58, padding: "0 32px", borderRadius: 9999, background: "#fff", color: "#111827", border: 0, fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: 16, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            앱 바로가기 <span style={{ fontSize: 14 }}>→</span>
+          </a>
+          <button onClick={() => setShowQR(v => !v)}
+                  style={{ height: 58, padding: "0 28px", borderRadius: 9999, background: "rgba(17,24,39,0.85)", color: "#fff", border: 0, fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: 16, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 18 }}>▦</span> QR 코드로 접속
+          </button>
+        </div>
+
+        {showQR && (
+          <div style={{ marginTop: 20, display: "inline-flex", alignItems: "center", gap: 18, background: "#fff", borderRadius: 24, padding: "16px 22px 16px 16px", boxShadow: "0 12px 32px rgba(0,0,0,0.18)" }}>
+            <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #F0F0F0" }}>
+              <QRCode size={120}/>
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: "#111827" }}>모바일로 스캔하세요</div>
+              <div style={{ fontSize: 12, color: "#6B7280", marginTop: 4 }}>app.hanmadang.my</div>
+              <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>홈 화면에 추가하면 앱처럼 사용됩니다.</div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Phone mockups */}
+      <div style={{ position: "absolute", right: 120, top: 140, zIndex: 3 }}>
+        <PhoneMock width={290}><HomeScreen accent={accent}/></PhoneMock>
+      </div>
+      <div style={{ position: "absolute", right: 380, top: 220, zIndex: 2, opacity: .92, transform: "rotate(-6deg)" }}>
+        <PhoneMock width={250}><CategoryScreen accent={accent}/></PhoneMock>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { HanmadangHero, HanmadangWordmark, QRCode });
+</script>
+
+<!-- ── Sections ───────────────────────────────────────────────────────────── -->
+<script type="text/babel">
+/* ── Key Features ── */
+function KeyFeaturesSection({ accent }) {
+  return (
+    <section id="features" style={{ padding: "100px 24px 40px" }}>
+      <div style={{ padding: "0 76px", marginBottom: 50, display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 40 }}>
+        <div>
+          <div style={{ fontWeight: 600, fontSize: 13, color: accent, letterSpacing: "0.06em", textTransform: "uppercase" }}>Key Features</div>
+          <h2 style={{ margin: "14px 0 0", fontWeight: 700, fontSize: 54, lineHeight: 1.05, color: "#111827", letterSpacing: "-0.025em", maxWidth: 680 }}>
+            말레이시아 생활의<br/>모든 것, 한 손에.
+          </h2>
+        </div>
+        <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "#4B5563", maxWidth: 380 }}>
+          AI 뉴스 요약, 한인 업체 디렉토리, 실시간 알림 — 일상에서 가장 자주 필요한 세 가지를 깊게 다룹니다.
+        </p>
+      </div>
+
+      {/* Feature 1 — AI News */}
+      <div style={{ margin: "0 24px 24px", display: "grid", gridTemplateColumns: "1.05fr 1fr", background: "#111827", borderRadius: 40, overflow: "hidden", minHeight: 480 }}>
+        <div style={{ padding: "60px 60px", color: "#fff", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(254,93,51,0.15)", border: `1px solid ${accent}55`, color: accent, borderRadius: 9999, padding: "6px 14px", fontSize: 12, fontWeight: 600, width: "fit-content" }}>
+            ✦ Powered by Claude AI
+          </div>
+          <h3 style={{ margin: "22px 0 0", fontWeight: 700, fontSize: 42, lineHeight: 1.1, letterSpacing: "-0.025em" }}>AI 매일 뉴스 요약</h3>
+          <p style={{ margin: "18px 0 0", fontSize: 17, lineHeight: "28px", color: "#9CA3AF", maxWidth: 480 }}>
+            바쁜 아침, <span style={{ color: "#fff" }}>The Star</span>, Bernama, NST 등 현지 주요 매체의 헤드라인을 한국어로 요약해 드립니다. 매일 7시, 5분이면 충분합니다.
+          </p>
+          <div style={{ marginTop: 24, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {["The Star","Bernama","NST","Free Malaysia Today"].map(s => (
+              <span key={s} style={{ padding: "6px 12px", borderRadius: 9999, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", fontSize: 12, color: "#9CA3AF" }}>{s}</span>
+            ))}
+          </div>
+        </div>
+        <div style={{ position: "relative", background: `linear-gradient(135deg, ${accent}33, #D9B8D533)`, padding: 50, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ background: "#fff", borderRadius: 24, padding: "22px 24px", width: "100%", maxWidth: 380, boxShadow: "0 24px 48px -12px rgba(0,0,0,0.35)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11, color: "#9CA3AF", fontWeight: 600 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: accent }}/>
+              TODAY · 2026.05.04 · AI 요약
+            </div>
+            <div style={{ fontWeight: 700, fontSize: 20, color: "#111827", marginTop: 14, lineHeight: 1.3, letterSpacing: "-0.01em" }}>
+              FTAA 가입 신속 해결 모색 — 말레이시아 육상부 발표
+            </div>
+            <div style={{ fontSize: 13, color: "#4B5563", lineHeight: "22px", marginTop: 10 }}>
+              말레이시아 정부가 FTAA(자유무역협정) 가입과 관련된 주요 쟁점에 대한 신속한 해결책을 모색 중이라고 베르나마가 보도했습니다…
+            </div>
+            <div style={{ marginTop: 14, paddingTop: 14, borderTop: "1px solid #F1F1F1", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 11, color: "#9CA3AF" }}>출처: 베르나마</span>
+              <span style={{ fontSize: 11, color: accent, fontWeight: 600 }}>전문 보기 →</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Feature 2 + 3 */}
+      <div style={{ margin: "0 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        <div style={{ background: "#F6F6F6", borderRadius: 40, padding: "50px 50px", minHeight: 460, display: "flex", flexDirection: "column" }}>
+          <div style={{ width: 54, height: 54, borderRadius: 18, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>📍</div>
+          <h3 style={{ margin: "24px 0 0", fontWeight: 700, fontSize: 28, lineHeight: 1.2, color: "#111827", letterSpacing: "-0.02em" }}>한인 업체 디렉토리</h3>
+          <p style={{ margin: "12px 0 0", fontSize: 15.5, lineHeight: "24px", color: "#4B5563" }}>
+            내 주변 맛집부터 병원까지 — 검증된 한인 업체를 한 번에 찾는 스마트한 방법.
+          </p>
+          <div style={{ marginTop: "auto", paddingTop: 30, display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
+            {[{n:"음식점",icon:"🍽️",bg:"#FFE9DC"},{n:"병원",icon:"🏥",bg:"#DBEDFB"},{n:"미용실",icon:"💇",bg:"#FEC6C7"},{n:"인테리어",icon:"🛋️",bg:"#FEF3C7"},{n:"학원",icon:"📚",bg:"#D9B8D5"},{n:"렌터카",icon:"🚗",bg:"#D1FAE5"}].map(c => (
+              <div key={c.n} style={{ background: "#fff", borderRadius: 14, padding: "12px 10px", display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 28, height: 28, borderRadius: 8, background: c.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13 }}>{c.icon}</div>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "#111827" }}>{c.n}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ background: "#DBEDFB", borderRadius: 40, padding: "50px 50px", minHeight: 460, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", right: -40, bottom: -40, width: 200, height: 200, borderRadius: "50%", background: "rgba(255,255,255,0.5)" }}/>
+          <div style={{ width: 54, height: 54, borderRadius: 18, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, position: "relative" }}>🔔</div>
+          <h3 style={{ margin: "24px 0 0", fontWeight: 700, fontSize: 28, lineHeight: 1.2, color: "#111827", letterSpacing: "-0.02em", position: "relative" }}>실시간 알림 서비스</h3>
+          <p style={{ margin: "12px 0 0", fontSize: 15.5, lineHeight: "24px", color: "#1F2937", position: "relative" }}>
+            중요한 공지나 예약 현황을 텔레그램으로 즉시 확인하세요. 앱을 켜지 않아도 놓치지 않습니다.
+          </p>
+          <div style={{ marginTop: "auto", paddingTop: 24, position: "relative" }}>
+            {[
+              { title: "한마당 알림", sub: "예약 승인: 말질로 (4/29 22:23)", time: "방금" },
+              { title: "공지 — v1.2 업데이트", sub: "Today MY 뉴스 카테고리가 추가되었어요.", time: "" },
+            ].map((n, i) => (
+              <div key={i} style={{ background: "#fff", borderRadius: 18, padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, marginTop: i ? 8 : 0, opacity: i ? .85 : 1 }}>
+                <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#229ED9", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 16 }}>✈</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{n.title}</div>
+                  <div style={{ fontSize: 12, color: "#4B5563", marginTop: 2 }}>{n.sub}</div>
+                </div>
+                {n.time && <div style={{ fontSize: 11, color: "#9CA3AF" }}>{n.time}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── PWA & Data ── */
+function PWASection({ accent }) {
+  return (
+    <section id="pwa" style={{ padding: "60px 24px 20px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+        <div style={{ background: "#F6F6F6", borderRadius: 40, padding: "60px 50px", minHeight: 420, position: "relative", overflow: "hidden" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 600, fontSize: 13, color: accent, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            <span>PWA</span><span style={{ width: 4, height: 4, borderRadius: "50%", background: accent }}/><span style={{ color: "#6B7280" }}>Progressive Web App</span>
+          </div>
+          <h3 style={{ margin: "14px 0 0", fontWeight: 700, fontSize: 38, lineHeight: 1.1, color: "#111827", letterSpacing: "-0.025em", maxWidth: 420 }}>설치 없이 사용,<br/>홈 화면에 추가.</h3>
+          <p style={{ margin: "16px 0 0", fontSize: 16, lineHeight: "26px", color: "#4B5563", maxWidth: 420 }}>
+            App Store · Google Play 거치지 않고 웹에서 바로 실행됩니다. 필요할 때 홈 화면에 추가하면 앱처럼 사용할 수 있어요.
+          </p>
+          <div style={{ marginTop: 24, display: "flex", gap: 10, flexWrap: "wrap" }}>
+            {["⚡ 즉시 실행","📦 0MB 설치","🔄 자동 업데이트","🌙 오프라인 캐시"].map(t => (
+              <span key={t} style={{ padding: "8px 14px", borderRadius: 9999, background: "#fff", fontSize: 13, fontWeight: 600, color: "#111827" }}>{t}</span>
+            ))}
+          </div>
+          <div style={{ position: "absolute", right: -30, bottom: -30, width: 170, height: 170, borderRadius: "50%", background: accent, opacity: .1 }}/>
+        </div>
+
+        <div style={{ background: "#111827", color: "#fff", borderRadius: 40, padding: "60px 50px", minHeight: 420, position: "relative", overflow: "hidden" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, fontWeight: 600, fontSize: 13, color: accent, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            <span>Data</span><span style={{ width: 4, height: 4, borderRadius: "50%", background: accent }}/><span style={{ color: "#9CA3AF" }}>Google Sheets Backbone</span>
+          </div>
+          <h3 style={{ margin: "14px 0 0", fontWeight: 700, fontSize: 38, lineHeight: 1.1, letterSpacing: "-0.025em", maxWidth: 420 }}>신뢰할 수 있는<br/>투명한 데이터.</h3>
+          <p style={{ margin: "16px 0 0", fontSize: 16, lineHeight: "26px", color: "#9CA3AF", maxWidth: 420 }}>
+            구글 시트 기반의 데이터 파이프라인으로 빠르고 투명한 업데이트를 보장합니다.
+          </p>
+          <div style={{ marginTop: 30, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "16px 18px", fontFamily: "ui-monospace, monospace", fontSize: 12, color: "#9CA3AF", lineHeight: "22px" }}>
+            <div><span style={{ color: "#34D399" }}>●</span> Google Sheets <span style={{ color: "#6B7280" }}>// source of truth</span></div>
+            <div style={{ paddingLeft: 14 }}>↓ <span style={{ color: accent }}>fetch / cache (≤ 5min)</span></div>
+            <div><span style={{ color: "#34D399" }}>●</span> CDN edge <span style={{ color: "#6B7280" }}>// global</span></div>
+            <div style={{ paddingLeft: 14 }}>↓ <span style={{ color: accent }}>render</span></div>
+            <div><span style={{ color: "#34D399" }}>●</span> app.hanmadang.my</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Live Counter ── */
+function LiveCounter({ accent }) {
+  const [stores, setStores] = React.useState(127);
+  const [active, setActive] = React.useState(38);
+  const [news, setNews] = React.useState(1240);
+  React.useEffect(() => {
+    const t = setInterval(() => {
+      setActive(a => Math.max(20, Math.min(80, a + (Math.random() > 0.5 ? 1 : -1))));
+      if (Math.random() > 0.92) setStores(s => s + 1);
+      if (Math.random() > 0.85) setNews(n => n + 1);
+    }, 1800);
+    return () => clearInterval(t);
+  }, []);
+  const items = [
+    { label: "등록 업체", value: stores, suffix: "+", sub: "검증 완료 가게" },
+    { label: "실시간 활성 사용자", value: active, dot: true, sub: "지금 이 순간" },
+    { label: "AI 뉴스 요약 누적", value: news.toLocaleString(), sub: "기사 처리" },
+  ];
+  return (
+    <section style={{ padding: "40px 24px" }}>
+      <div style={{ background: "#fff", border: "1px solid #F0F0F0", borderRadius: 40, padding: "40px 50px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#34D399", display: "inline-block", animation: "pulse 1.6s ease-in-out infinite" }}/>
+          <span style={{ fontSize: 13, fontWeight: 600, color: "#111827", letterSpacing: "0.04em", textTransform: "uppercase" }}>Live</span>
+          <span style={{ fontSize: 13, color: "#6B7280" }}>· 실시간 대시보드</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
+          {items.map((it, i) => (
+            <div key={i} style={{ padding: "24px 0", borderLeft: i ? "1px solid #F0F0F0" : "none", paddingLeft: i ? 32 : 0 }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                <div style={{ fontWeight: 700, fontSize: 48, color: "#111827", letterSpacing: "-0.03em", lineHeight: 1 }}>{it.value}{it.suffix || ""}</div>
+                {it.dot && <span style={{ width: 8, height: 8, borderRadius: "50%", background: accent, display: "inline-block", animation: "pulse 1.2s ease-in-out infinite" }}/>}
+              </div>
+              <div style={{ marginTop: 10, fontSize: 14, color: "#111827", fontWeight: 600 }}>{it.label}</div>
+              <div style={{ marginTop: 2, fontSize: 12, color: "#9CA3AF" }}>{it.sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Partnership ── ★ "가게 입점 신청하기" → Google Form 연결 */
+function PartnershipSection({ accent }) {
+  const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScE19vrabG8oQWSHUYWtPo1vTakSdz5ErmZJeidJPxCwi4iyA/viewform?usp=dialog";
+  return (
+    <section id="partners" style={{ padding: "60px 24px" }}>
+      <div style={{ position: "relative", background: accent, borderRadius: 40, padding: "80px 70px", overflow: "hidden", color: "#fff" }}>
+        <div style={{ position: "absolute", left: 60, top: 60, width: 60, height: 60, borderRadius: "50%", background: "#FEC6C7" }}/>
+        <div style={{ position: "absolute", right: 200, top: 80, width: 90, height: 90, borderRadius: "50%", background: "#D9B8D5", opacity: .7 }}/>
+        <div style={{ position: "absolute", left: 280, bottom: 60, width: 46, height: 46, borderRadius: "50%", background: "#fff", opacity: .4 }}/>
+        <div style={{ position: "relative", display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 60, alignItems: "center" }}>
+          <div>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 9999, padding: "7px 14px", fontSize: 13, fontWeight: 600, marginBottom: 24 }}>
+              For Store Owners
+            </div>
+            <h2 style={{ margin: 0, fontWeight: 600, fontSize: 60, lineHeight: 1.05, letterSpacing: "-0.025em" }}>
+              우리 가게 홍보,<br/>한마당과 함께하세요.
+            </h2>
+            <p style={{ margin: "24px 0 0", fontSize: 18, lineHeight: "30px", maxWidth: 520, opacity: .95 }}>
+              불필요한 광고비 없이, 검증된 한인 고객과 직접 연결됩니다. 등록부터 예약 관리까지 — 한마당이 함께합니다.
+            </p>
+            <div style={{ display: "flex", gap: 12, marginTop: 36, flexWrap: "wrap" }}>
+              {/* ★ Google Form 링크 */}
+              <a href={FORM_URL} target="_blank" rel="noopener"
+                 style={{ height: 54, padding: "0 30px", borderRadius: 9999, background: "#fff", color: accent, border: 0, fontWeight: 700, fontSize: 16, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+                가게 입점 신청하기 →
+              </a>
+              <a href="https://t.me/hanmadang_my" target="_blank" rel="noopener"
+                 style={{ height: 54, padding: "0 28px", borderRadius: 9999, background: "rgba(17,24,39,0.85)", color: "#fff", border: 0, fontWeight: 700, fontSize: 16, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+                ✈ 텔레그램 상담
+              </a>
+            </div>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 14 }}>
+            {[
+              { n: "01", t: "간편한 가게 정보 등록", d: "이름·주소·메뉴·사진을 폼에 입력하면 24시간 내 검토." },
+              { n: "02", t: "앱 내 노출 + AI 뉴스 인접 광고", d: "카테고리 상단·홈 추천·AI 요약 옆 자연 노출." },
+              { n: "03", t: "예약 관리 시스템 연동", d: "고객의 예약 요청을 텔레그램으로 즉시 받고 승인." },
+            ].map(s => (
+              <div key={s.n} style={{ background: "rgba(17,24,39,0.18)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 24, padding: "22px 26px" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, opacity: .7 }}>{s.n}</span>
+                  <span style={{ fontSize: 18, fontWeight: 700 }}>{s.t}</span>
+                </div>
+                <p style={{ margin: "6px 0 0 36px", fontSize: 14, lineHeight: "22px", opacity: .9 }}>{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── About ── */
+function AboutSection({ accent }) {
+  return (
+    <section id="about" style={{ padding: "60px 24px" }}>
+      <div style={{ background: "#F6F6F6", borderRadius: 40, padding: "80px 70px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", right: -60, top: -60, width: 240, height: 240, borderRadius: "50%", background: accent, opacity: .08 }}/>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 80, position: "relative" }}>
+          <div>
+            <div style={{ fontWeight: 600, fontSize: 13, color: accent, letterSpacing: "0.06em", textTransform: "uppercase" }}>About</div>
+            <h2 style={{ margin: "14px 0 0", fontWeight: 700, fontSize: 48, lineHeight: 1.05, color: "#111827", letterSpacing: "-0.025em" }}>한인 사회의<br/>정직한 연결고리.</h2>
+          </div>
+          <div>
+            <p style={{ margin: 0, fontSize: 17, lineHeight: "28px", color: "#4B5563" }}>
+              말레이시아에 처음 발을 내딛는 분들부터 이미 거주 중인 분들까지. <span style={{ color: "#111827", fontWeight: 700 }}>한마당 Malaysia</span>는 현지의 검증되지 않은 정보로 인해 겪는 불편함과 정보의 불균형을 해소하기 위해 시작되었습니다.
+            </p>
+            <p style={{ margin: "20px 0 0", fontSize: 17, lineHeight: "28px", color: "#4B5563" }}>
+              불필요한 광고비 지출로 고충을 겪는 소상공인과, 고품질의 서비스를 찾는 이용자를 직접 연결하여 모두가 상생할 수 있는 <span style={{ color: "#111827", fontWeight: 700 }}>건강한 한인 커뮤니티 생태계</span>를 만들어 갑니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── FAQ ── */
+function FAQRow({ q, a, color, bg }) {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div style={{ borderRadius: 32, background: bg, overflow: "hidden" }}>
+      <button onClick={() => setOpen(o => !o)} style={{ display: "flex", alignItems: "center", gap: 16, padding: "22px 26px", width: "100%", background: "transparent", border: 0, cursor: "pointer", textAlign: "left" }}>
+        <span style={{ width: 34, height: 34, borderRadius: "50%", background: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", color, fontSize: 13, flexShrink: 0, transition: "transform 220ms", transform: open ? "rotate(180deg)" : "none", fontWeight: 700 }}>▾</span>
+        <span style={{ fontWeight: 600, fontSize: 18, color: "#111827", flex: 1 }}>{q}</span>
+      </button>
+      {open && <div style={{ padding: "0 26px 24px 76px", fontSize: 15, lineHeight: "24px", color: "#4B5563" }}>{a}</div>}
+    </div>
+  );
+}
+
+function FAQSection({ accent }) {
+  const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScE19vrabG8oQWSHUYWtPo1vTakSdz5ErmZJeidJPxCwi4iyA/viewform?usp=dialog";
+  const items = [
+    { q: "한마당은 어떤 서비스인가요?", a: "말레이시아 거주 한인을 위한 PWA 기반 생활 플랫폼입니다. AI 뉴스 요약, 한인 업체 디렉토리, 실시간 알림이 핵심 기능입니다.", color: accent, bg: "#FFE9DC" },
+    { q: "앱 설치가 필요한가요?", a: "필요 없습니다. app.hanmadang.my 에 접속하면 바로 사용 가능하며, 홈 화면에 추가하면 앱처럼 사용할 수 있습니다.", color: "#D9B8D5", bg: "#FEC6C7" },
+    { q: "AI 뉴스 요약은 얼마나 정확한가요?", a: "Claude AI가 The Star, Bernama 등 현지 매체의 원문을 한국어로 요약합니다. 출처 링크가 항상 함께 제공되어 원문 확인이 가능합니다.", color: accent, bg: "#FEC6C7" },
+    { q: "가게를 등록하고 싶어요.", a: `입점 신청 섹션의 [가게 입점 신청하기] 버튼 또는 텔레그램으로 연락 주시면 24시간 내 안내해 드립니다. 입점비는 받지 않습니다.`, color: "#D9B8D5", bg: "#FFE9DC" },
+    { q: "개인정보는 안전한가요?", a: "이름·연락처는 예약 진행에 필요한 최소 범위에서만 사용되며 외부에 제공되지 않습니다.", color: accent, bg: "#DBEDFB" },
+    { q: "환율과 유가 정보는 얼마나 자주 갱신되나요?", a: "매일 자동으로 갱신됩니다. 데이터는 구글 시트 기반 파이프라인을 통해 5분 이내에 앱에 반영됩니다.", color: "#D9B8D5", bg: "#DBEDFB" },
+  ];
+  return (
+    <section id="faq" style={{ padding: "60px 100px" }}>
+      <div style={{ textAlign: "center", marginBottom: 48 }}>
+        <div style={{ fontWeight: 600, fontSize: 13, color: accent, letterSpacing: "0.06em", textTransform: "uppercase" }}>FAQ</div>
+        <h2 style={{ margin: "14px 0 0", fontWeight: 700, fontSize: 54, lineHeight: 1.05, color: "#111827", letterSpacing: "-0.025em" }}>자주 묻는 질문.</h2>
+        <p style={{ margin: "16px auto 0", maxWidth: 520, fontWeight: 300, fontSize: 18, color: "#4B5563" }}>궁금한 것들을 미리 정리해 두었어요.</p>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+        {items.map((it, i) => <FAQRow key={i} {...it}/>)}
+      </div>
+    </section>
+  );
+}
+
+/* ── Footer ── */
+function HanmadangFooter({ accent }) {
+  const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScE19vrabG8oQWSHUYWtPo1vTakSdz5ErmZJeidJPxCwi4iyA/viewform?usp=dialog";
+  return (
+    <footer style={{ padding: "24px" }}>
+      <div style={{ background: "#111827", borderRadius: 40, padding: "60px 60px 36px", color: "#fff" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr", gap: 46 }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 12, background: "#fff", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img src="assets/hanmadang-logo.png" alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }}/>
+              </div>
+              <span style={{ fontWeight: 700, fontSize: 24, letterSpacing: "-0.02em" }}>한마당 <span style={{ opacity: .7, fontWeight: 500, fontSize: 18 }}>Malaysia</span></span>
+            </div>
+            <p style={{ margin: "24px 0 0", maxWidth: 320, fontSize: 14, lineHeight: "22px", color: "#9CA3AF" }}>
+              말레이시아 생활의 모든 것, 한 손에. 검증된 한인 서비스 + AI 뉴스 요약 + 실시간 알림.
+            </p>
+            <a href="https://app.hanmadang.my" target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginTop: 20, color: accent, fontWeight: 700, fontSize: 14, textDecoration: "none" }}>
+              app.hanmadang.my →
+            </a>
+          </div>
+          <div>
+            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>Product</h4>
+            <ul style={{ listStyle: "none", padding: 0, margin: "22px 0 0", fontSize: 14, color: "#9CA3AF", lineHeight: "32px" }}>
+              <li>AI 뉴스 요약</li><li>업체 디렉토리</li><li>실시간 알림</li><li>Today MY</li>
+            </ul>
+          </div>
+          <div>
+            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>Company</h4>
+            <ul style={{ listStyle: "none", padding: 0, margin: "22px 0 0", fontSize: 14, color: "#9CA3AF", lineHeight: "32px" }}>
+              <li>About Us</li>
+              <li><a href={FORM_URL} target="_blank" rel="noopener" style={{ color: "#9CA3AF", textDecoration: "none" }}>가게 입점 신청</a></li>
+              <li>FAQ</li><li>Privacy Policy</li>
+            </ul>
+          </div>
+          <div>
+            <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>Contact</h4>
+            <ul style={{ listStyle: "none", padding: 0, margin: "22px 0 0", fontSize: 14, color: "#9CA3AF", lineHeight: "32px" }}>
+              <li>✈ 텔레그램 채널</li><li>💬 카카오톡</li><li>📷 인스타그램</li><li>alstn1202@gmail.com</li>
+            </ul>
+          </div>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 50, paddingTop: 24, borderTop: "1px solid #1F2937", fontSize: 13, color: "#6B7280" }}>
+          <span>© 2026 한마당 Malaysia. All rights reserved.</span>
+          <span>Made in Kuala Lumpur · 말레이시아 한인 커뮤니티</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+Object.assign(window, { KeyFeaturesSection, PWASection, LiveCounter, PartnershipSection, AboutSection, FAQSection, HanmadangFooter });
+</script>
+
+<!-- ── Main App ───────────────────────────────────────────────────────────── -->
+<script type="text/babel">
+const TWEAK_DEFAULTS = {
+  "accentName": "Coral",
+  "accent": "#FE5D33",
+  "showLiveCounter": true
+};
+
+const ACCENTS = [
+  { name: "Coral",     value: "#FE5D33" },
+  { name: "Tangerine", value: "#F97316" },
+  { name: "Cobalt",    value: "#2563EB" },
+  { name: "Forest",    value: "#15803D" },
+  { name: "Plum",      value: "#7C3AED" },
+  { name: "Charcoal",  value: "#111827" },
+];
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const accent = tweaks.accent;
+
+  const onNav = (id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  return (
+    <>
+      <div id="home" data-screen-label="01 Hero">
+        <HanmadangHero accent={accent} onNav={onNav}/>
+      </div>
+      <div data-screen-label="02 Key Features"><KeyFeaturesSection accent={accent}/></div>
+      <div data-screen-label="03 PWA & Data"><PWASection accent={accent}/></div>
+      {tweaks.showLiveCounter && <div data-screen-label="04 Live Counter"><LiveCounter accent={accent}/></div>}
+      <div data-screen-label="05 Partnership"><PartnershipSection accent={accent}/></div>
+      <div data-screen-label="06 About"><AboutSection accent={accent}/></div>
+      <div data-screen-label="07 FAQ"><FAQSection accent={accent}/></div>
+      <HanmadangFooter accent={accent}/>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="브랜드 컬러">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
+            {ACCENTS.map(c => (
+              <button key={c.value} onClick={() => setTweak({ accent: c.value, accentName: c.name })}
+                style={{ padding: "10px 8px", borderRadius: 12, border: tweaks.accent === c.value ? "2px solid #111" : "1px solid #E5E7EB", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, fontSize: 12, fontWeight: 600 }}>
+                <span style={{ width: 18, height: 18, borderRadius: 6, background: c.value, flexShrink: 0 }}/>
+                {c.name}
+              </button>
+            ))}
+          </div>
+        </TweakSection>
+        <TweakColor label="커스텀 컬러" value={tweaks.accent} onChange={v => setTweak({ accent: v, accentName: "Custom" })}/>
+        <TweakToggle label="실시간 카운터 표시" value={tweaks.showLiveCounter} onChange={v => setTweak('showLiveCounter', v)}/>
+      </TweaksPanel>
+    </>
+  );
+}
+
+(function bootstrap() {
+  const ready = window.HanmadangHero && window.KeyFeaturesSection && window.PWASection
+             && window.LiveCounter && window.PartnershipSection && window.AboutSection
+             && window.FAQSection && window.HanmadangFooter && window.useTweaks
+             && window.TweaksPanel && window.HomeScreen && window.PhoneMock;
+  if (ready) {
+    ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+  } else {
+    setTimeout(bootstrap, 80);
+  }
+})();
+</script>
+</body>
+</html>
