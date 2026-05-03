@@ -558,7 +558,7 @@ function KeyFeaturesSection({ accent }) {
           <div style={{ width: 54, height: 54, borderRadius: 18, background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24, position: "relative" }}>🔔</div>
           <h3 style={{ margin: "24px 0 0", fontWeight: 700, fontSize: 28, lineHeight: 1.2, color: "#111827", letterSpacing: "-0.02em", position: "relative" }}>실시간 알림 서비스</h3>
           <p style={{ margin: "12px 0 0", fontSize: 15.5, lineHeight: "24px", color: "#1F2937", position: "relative" }}>
-            중요한 공지나 예약 현황을 텔레그램으로 즉시 확인하세요. 앱을 켜지 않아도 놓치지 않습니다.
+            중요한 공지나 예약 현황을 메신저으로 즉시 확인하세요. 앱을 켜지 않아도 놓치지 않습니다.
           </p>
           <div style={{ marginTop: "auto", paddingTop: 24, position: "relative" }}>
             {[
@@ -692,9 +692,9 @@ function PartnershipSection({ accent }) {
                  style={{ height: 54, padding: "0 30px", borderRadius: 9999, background: "#fff", color: accent, border: 0, fontWeight: 700, fontSize: 16, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
                 가게 입점 신청하기 →
               </a>
-              <a href="https://t.me/hanmadang_my" target="_blank" rel="noopener"
+              <a href="https://open.kakao.com/o/ptP1eKpi" target="_blank" rel="noopener"
                  style={{ height: 54, padding: "0 28px", borderRadius: 9999, background: "rgba(17,24,39,0.85)", color: "#fff", border: 0, fontWeight: 700, fontSize: 16, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-                ✈ 텔레그램 상담
+                💬 카카오톡 상담
               </a>
             </div>
           </div>
@@ -702,7 +702,7 @@ function PartnershipSection({ accent }) {
             {[
               { n: "01", t: "간편한 가게 정보 등록", d: "이름·주소·메뉴·사진을 폼에 입력하면 24시간 내 검토." },
               { n: "02", t: "앱 내 노출 + AI 뉴스 인접 광고", d: "카테고리 상단·홈 추천·AI 요약 옆 자연 노출." },
-              { n: "03", t: "예약 관리 시스템 연동", d: "고객의 예약 요청을 텔레그램으로 즉시 받고 승인." },
+              { n: "03", t: "예약 관리 시스템 연동", d: "고객의 예약 요청을 메신저으로 즉시 받고 승인." },
             ].map(s => (
               <div key={s.n} style={{ background: "rgba(17,24,39,0.18)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 24, padding: "22px 26px" }}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
@@ -764,7 +764,7 @@ function FAQSection({ accent }) {
     { q: "한마당은 어떤 서비스인가요?", a: "말레이시아 거주 한인을 위한 PWA 기반 생활 플랫폼입니다. AI 뉴스 요약, 한인 업체 디렉토리, 실시간 알림이 핵심 기능입니다.", color: accent, bg: "#FFE9DC" },
     { q: "앱 설치가 필요한가요?", a: "필요 없습니다. app.hanmadang.my 에 접속하면 바로 사용 가능하며, 홈 화면에 추가하면 앱처럼 사용할 수 있습니다.", color: "#D9B8D5", bg: "#FEC6C7" },
     { q: "AI 뉴스 요약은 얼마나 정확한가요?", a: "Claude AI가 The Star, Bernama 등 현지 매체의 원문을 한국어로 요약합니다. 출처 링크가 항상 함께 제공되어 원문 확인이 가능합니다.", color: accent, bg: "#FEC6C7" },
-    { q: "가게를 등록하고 싶어요.", a: `입점 신청 섹션의 [가게 입점 신청하기] 버튼 또는 텔레그램으로 연락 주시면 24시간 내 안내해 드립니다. 입점비는 받지 않습니다.`, color: "#D9B8D5", bg: "#FFE9DC" },
+    { q: "가게를 등록하고 싶어요.", a: `입점 신청 섹션의 [가게 입점 신청하기] 버튼 또는 메신저으로 연락 주시면 24시간 내 안내해 드립니다. 입점비는 받지 않습니다.`, color: "#D9B8D5", bg: "#FFE9DC" },
     { q: "개인정보는 안전한가요?", a: "이름·연락처는 예약 진행에 필요한 최소 범위에서만 사용되며 외부에 제공되지 않습니다.", color: accent, bg: "#DBEDFB" },
     { q: "환율과 유가 정보는 얼마나 자주 갱신되나요?", a: "매일 자동으로 갱신됩니다. 데이터는 구글 시트 기반 파이프라인을 통해 5분 이내에 앱에 반영됩니다.", color: "#D9B8D5", bg: "#DBEDFB" },
   ];
@@ -820,13 +820,14 @@ function HanmadangFooter({ accent }) {
           <div>
             <h4 style={{ margin: 0, fontSize: 14, fontWeight: 700 }}>Contact</h4>
             <ul style={{ listStyle: "none", padding: 0, margin: "22px 0 0", fontSize: 14, color: "#9CA3AF", lineHeight: "32px" }}>
-              <li>✈ 텔레그램 채널</li><li>💬 카카오톡</li><li>📷 인스타그램</li><li>alstn1202@gmail.com</li>
+              <li><a href="https://open.kakao.com/o/ptP1eKpi" target="_blank" rel="noopener" style={{ color: "#9CA3AF", textDecoration: "none" }}>💬 카카오톡</a></li>
+              <li><a href="https://www.instagram.com/han_madang1?igsh=MWZ3cjZxcXEyZWlsag%3D%3D&utm_source=qr" target="_blank" rel="noopener" style={{ color: "#9CA3AF", textDecoration: "none" }}>📷 인스타그램</a></li>
             </ul>
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 50, paddingTop: 24, borderTop: "1px solid #1F2937", fontSize: 13, color: "#6B7280" }}>
           <span>© 2026 한마당 Malaysia. All rights reserved.</span>
-          <span>Made in Kuala Lumpur · 말레이시아 한인 커뮤니티</span>
+          <span>Made in 클로드</span>
         </div>
       </div>
     </footer>
