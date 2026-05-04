@@ -627,22 +627,35 @@ function PWASection({ accent }) {
 }
 
 /* ── Live Counter ── */
+const DASHBOARD_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTidfegikzJbftDHbjK1nVR8oqKep19VptX_PMSMYyxbhxn6kI46esPlpdEHTH4rppS0dts6afpF_Ft/pub?gid=0&single=true&output=csv";
+
 function LiveCounter({ accent }) {
-  const [stores, setStores] = React.useState(127);
-  const [active, setActive] = React.useState(38);
-  const [news, setNews] = React.useState(1240);
+  const [stores, setStores] = React.useState(null);
+  const [users,  setUsers]  = React.useState(null);
+  const [news,   setNews]   = React.useState(null);
+
   React.useEffect(() => {
-    const t = setInterval(() => {
-      setActive(a => Math.max(20, Math.min(80, a + (Math.random() > 0.5 ? 1 : -1))));
-      if (Math.random() > 0.92) setStores(s => s + 1);
-      if (Math.random() > 0.85) setNews(n => n + 1);
-    }, 1800);
-    return () => clearInterval(t);
+    const load = () =>
+      fetch(DASHBOARD_URL + '&t=' + Date.now()) // 캐시 방지
+        .then(r => r.text())
+        .then(text => {
+          const rows = text.trim().split(/\r?\n/);
+          const vals = rows[1].split(',');
+          setStores(Number(vals[0]) || 0);
+          setUsers(Number(vals[1])  || 0);
+          setNews(Number(vals[2])   || 0);
+        })
+        .catch(() => { setStores('—'); setUsers('—'); setNews('—'); });
+
+    load(); // 최초 로딩
+    const timer = setInterval(load, 60000); // 60초마다 갱신
+    return () => clearInterval(timer);
   }, []);
+
   const items = [
-    { label: "등록 업체", value: stores, suffix: "+", sub: "검증 완료 가게" },
-    { label: "실시간 활성 사용자", value: active, dot: true, sub: "지금 이 순간" },
-    { label: "AI 뉴스 요약 누적", value: news.toLocaleString(), sub: "기사 처리" },
+    { label: "등록 업체",         value: stores ?? '…', suffix: "+", sub: "검증 완료 가게" },
+    { label: "등록 사용자",       value: users  ?? '…', suffix: "+", sub: "가입 완료" },
+    { label: "AI 뉴스 요약 누적", value: news   ?? '…', sub: "기사 처리" },
   ];
   return (
     <section style={{ padding: "40px 24px" }}>
